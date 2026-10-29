@@ -31,7 +31,12 @@ export default {
     return requete('/categories');
   },
 
-  getPlats() {
-    return requete('/plats');
+  getPlats(categorieId) {
+    // Si categorieId est fourni, on ajoute le paramètre à l'URL, sinon on garde '/plats'
+    const url = categorieId ? `/plats?categorie=${categorieId}` : '/plats';
+    return requete(url);
+
+    // return requete('/plats');
   },
+
 };

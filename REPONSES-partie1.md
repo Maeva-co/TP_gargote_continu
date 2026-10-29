@@ -6,6 +6,7 @@ Groupe : B
 Répondez en quelques phrases, avec vos mots. Quand une question demande ce que
 vous avez observé, décrivez ce que vous avez réellement vu à l'écran ou dans la console.
 
+
 ## Fiche 00 — Diagnostic JavaScript
 
 Score obtenu à `npm run js` : 6 / 6
@@ -19,3 +20,11 @@ Score obtenu à `npm run js` : 6 / 6
 - Q0.1 : Mes predictions: A -> 6000.001000.00; B -> 6000.006000.00; C -> Inconnue, D -> aucun; E -> 0. Les resultats: A -> 6000.001000.00; B -> 12000; C -> Inconnue, D -> aucun; E -> 0. C'est la reponse B qui etaient fausses, j'ai cru que ca suivait la meme logique que A etant donne que c'est un String mais en fait non.
 - Q0.2 : L'exercice 4 aurait donne un resultat faux sans `Number(...)` car il pourrait y avoir une concatenation au lieu d'un calcul numerique dans certains cas.
 - Q0.3 : Pour l'exercice 6, si on oublie le mot `await` devant `chargerPlats()`, il y a cette erreur `reçu {"erreur":null}, attendu {"nombre":4,"erreur":null}` dans le terminal. A ce que je crois ca veut dire que la valeur de la variable via la fonction n'est pas recu.
+
+
+## Fiche 01 — Prise en main
+
+- Q1.1 : `ion-router-outlet` sert a afficher la page courante, c'est une zone d'affichage dynamique. On en trouve deux dans le projet : dans App.vue et dans TabsPage.vue car dns App.vue on trouve la racine obligatoire de toute application Ionic et dans TabsPage.vue on trouve le bar/menu qu'on voit en bas de l'ecran.
+- Q1.2 : Quand IonNote n'etait plus importe, j'ai juste remarque 'hot updated' dans la console.
+- Q1.3 : `platsFiltres` est une propriété calculée plutôt qu'une fonction appelée dans le template ou une seconde variable `ref` puisque c'est une valeur calculee qui depend d'une valeur reactive d'ou l'utilisation adapte de computed.
+- Q1.4 : le slot `fixed` sur `ion-refresher permet de positionner de maniere correcte (par Ionic) le rafraichissement.

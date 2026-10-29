@@ -10,6 +10,10 @@
 
     <!-- Zone qui défile -->
     <ion-content>
+      <ion-refresher slot="fixed" @ion-refresh="rafraichir">
+        <ion-refresher-content />
+      </ion-refresher>
+
       <!-- 1. Chargement en cours -->
       <div v-if="chargement" class="ion-text-center ion-padding">
         <ion-spinner />
@@ -23,25 +27,48 @@
         <ion-button expand="block" @click="charger">Réessayer</ion-button>
       </div>
 
+      <!-- Recherche -->
+      <ion-toolbar>
+        <ion-searchbar v-model="recherche" placeholder="Rechercher un plat" :debounce="250" />
+      </ion-toolbar>
+
+      <ion-segment v-model="categorieChoisie" scrollable @ion-change="charger">
+        <ion-segment-button value="toutes"><ion-label>Tout</ion-label></ion-segment-button>
+        <ion-segment-button v-for="c in categories" :key="c.id" :value="String(c.id)">
+          <ion-label>{{ c.nom }}</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
       <!-- 3. La liste des plats -->
-      <ion-list v-else>
-        <ion-item v-for="plat in plats" :key="plat.id">
+      <ion-list v-if="platsFiltres.length > 0">
+        <ion-item v-for="plat in platsFiltres" :key="plat.id">
           <ion-label>
             <h2>{{ plat.nom }}</h2>
-            <p>{{ plat.categorie.nom }}</p>
+            <!-- <p>{{ plat.categorie.nom }}</p> -->
+            <p>{{ plat.description }}</p>
+            <ion-text color="primary">
+              <p>
+                {{ formatAriary(plat.prix) }} 
+                <ion-badge v-if="!plat.disponible" color="medium">Épuisé</ion-badge>
+              </p>
+            </ion-text>
           </ion-label>
-          <ion-note slot="end">{{ formatAriary(plat.prix) }}</ion-note>
+          <!-- <ion-note slot="end">{{ formatAriary(plat.prix) }}</ion-note> -->
         </ion-item>
+      </ion-list>
+      <ion-list v-else>
+          <p>Aucun plat ne correspond.</p>
       </ion-list>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
-  IonList, IonItem, IonLabel, IonNote, IonSpinner, IonText, IonButton,
+  IonList, IonItem, IonLabel, IonSpinner, IonText, IonButton, 
+  IonBadge, IonSearchbar, IonSegment, IonSegmentButton, IonRefresher, IonRefresherContent
 } from '@ionic/vue';
 import api from '@/services/api';
 import { formatAriary } from '@/utils/format';
@@ -50,17 +77,36 @@ const plats = ref([]);
 const chargement = ref(true);
 const erreur = ref(null);
 
+const recherche = ref('');
+
+const categories = ref([]);
+const categorieChoisie = ref('toutes');
+
+const platsFiltres = computed(() =>
+  plats.value.filter(p =>
+    p.nom.toLowerCase().includes(recherche.value.toLowerCase())
+  )
+)
+
 async function charger() {
   chargement.value = true;
   erreur.value = null;
   try {
-    plats.value = await api.getPlats();
+    categories.value = await api.getCategories();
+    plats.value = await api.getPlats(
+      categorieChoisie.value === 'toutes' ? undefined : categorieChoisie.value
+    );
   } catch (e) {
     erreur.value = "Impossible de joindre l'API. Est-elle lancée ?";
     console.error(e);
   } finally {
     chargement.value = false;
   }
+}
+
+async function rafraichir(event) {
+  await charger();
+  event.target.complete(); // arrête l'animation
 }
 
 onMounted(charger);

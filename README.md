@@ -21,13 +21,22 @@ gardez ce dossier précieusement.
 ## Contenu du dossier
 
 ```
-tp-ionic-gargote/
+tp-partie1/
 ├── README.md               ce fichier
-├── REPONSES-partie1.md     à compléter au fil des fiches, puis à rendre
-├── fiches/                 fiches 00 à 04, à suivre dans l'ordre
 ├── api/                    la mini-API de la gargote (Node, aucune dépendance)
 ├── app/                    l'application Ionic + Vue : VOTRE code
 └── exercices/js/           diagnostic JavaScript (fiche 00)
+```
+
+Les fiches se trouvent à part, dans `fiche-partie1/`. Chaque dossier
+`fiche-partie-NN` (de 00 à 04) contient le support de cours (Word), la fiche de TP
+(Markdown) et le modèle de réponses `REPONSES-NN.md` de cette fiche :
+
+```
+fiche-partie1/
+├── fiche-partie-00/   Cours_fiche_00_….docx · 00-diagnostic-js.md · REPONSES-00.md
+├── fiche-partie-01/   …
+└── fiche-partie-04/   …
 ```
 
 ## Lancer le projet
@@ -73,6 +82,6 @@ Chaque passage au TP est signalé dans le deck par une slide verte « Au TP : fi
   `git init`, `git add .`, `git commit -m "depart"`.
 - Faites un **commit à la fin de chaque fiche** (`git commit -am "fiche 03"`).
   Le commit de la fiche 04 est indispensable : la partie 2 compare votre code avec lui.
-- Chaque fiche se termine par des **questions** : répondez-y dans `REPONSES-partie1.md`.
+- Chaque fiche se termine par des **questions** : répondez-y dans le fichier `REPONSES-NN.md` du dossier de la fiche, puis rendez les cinq fichiers.
 - Si vous êtes bloqué, relisez la fiche et la slide indiquée, puis la documentation
   d'Ionic : <https://ionicframework.com/docs/components>.
