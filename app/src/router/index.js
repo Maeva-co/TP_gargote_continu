@@ -9,6 +9,7 @@ const routes = [
     children: [
       { path: '', redirect: '/tabs/menu' },
       { path: 'menu', component: () => import('@/views/MenuPage.vue') },
+      { path: 'menu/:id', component: () => import('@/views/PlatDetailPage.vue') },
       { path: 'panier', component: () => import('@/views/PanierPage.vue') },
       { path: 'commandes', component: () => import('@/views/CommandesPage.vue') },
     ],

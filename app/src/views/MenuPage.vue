@@ -41,9 +41,10 @@
 
       <!-- 3. La liste des plats -->
       <ion-list v-if="platsFiltres.length > 0">
-        <ion-item v-for="plat in platsFiltres" :key="plat.id">
+        <ion-item v-for="plat in platsFiltres" :key="plat.id" :router-link="`/tabs/menu/${plat.id}`">
           <ion-label>
             <h2>{{ plat.nom }}</h2>
+            <a href="/tabs/menu/${plat.id}">Navigation avec href</a>
             <!-- <p>{{ plat.categorie.nom }}</p> -->
             <p>{{ plat.description }}</p>
             <ion-text color="primary">
@@ -72,6 +73,9 @@ import {
 } from '@ionic/vue';
 import api from '@/services/api';
 import { formatAriary } from '@/utils/format';
+
+import { onUnmounted } from 'vue';
+import { onIonViewWillEnter, onIonViewDidLeave } from '@ionic/vue';
 
 const plats = ref([]);
 const chargement = ref(true);
@@ -110,4 +114,10 @@ async function rafraichir(event) {
 }
 
 onMounted(charger);
+
+onMounted(() => console.log('MENU onMounted'));
+onUnmounted(() => console.log('MENU onUnmounted'));
+onIonViewWillEnter(() => console.log('MENU ionViewWillEnter'));
+onIonViewDidLeave(() => console.log('MENU ionViewDidLeave'));
+
 </script>

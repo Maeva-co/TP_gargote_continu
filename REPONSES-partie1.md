@@ -28,3 +28,17 @@ Score obtenu à `npm run js` : 6 / 6
 - Q1.2 : Quand IonNote n'etait plus importe, j'ai juste remarque 'hot updated' dans la console.
 - Q1.3 : `platsFiltres` est une propriété calculée plutôt qu'une fonction appelée dans le template ou une seconde variable `ref` puisque c'est une valeur calculee qui depend d'une valeur reactive d'ou l'utilisation adapte de computed.
 - Q1.4 : le slot `fixed` sur `ion-refresher permet de positionner de maniere correcte (par Ionic) le rafraichissement.
+
+
+## Fiche 02 — Navigation
+
+- Q2.1 : La suite des messages observes:
+    - MENU ionViewWillEnter MenuPage.vue:119:34
+    - MENU onMounted MenuPage.vue:117:25
+    - MENU ionViewDidLeave MenuPage.vue:120:33
+    - MENU ionViewWillEnter MenuPage.vue:119:34
+    - MENU ionViewDidLeave MenuPage.vue:120:33
+    - MENU ionViewWillEnter MenuPage.vue:119:34
+    `onMounted` est exécuté une seule fois.
+- Q2.2 : Il faudra charger les donnees dans un hook onIonViewWillEnter car ce hook est execute a chaque fois que l'user ouvre la page Commandes pour afficher une liste a jour. On n'utilise pas onMounted car il ne s'execute qu'une seule fois, les donnees ne seront pas a jour.
+- Q2.3 : Différence entre `router-link` sur un `ion-item` et un simple lien `<a href>` : cote visuel -> `router-link` permet de mettre un lien sur le contenu de `ion-item` sans changement css mais `<a href>` change directement la couleur et souligne le contenu, comme on connait des liens; cote back -> `router-link` sur un `ion-item` utilise Vue Router tandis que `<a href>` est une balise classique html.
