@@ -49,3 +49,10 @@ Score obtenu à `npm run js` : 6 / 6
 - Q3.1 : Si `const lignes = ref([])` était écrit **à l'intérieur** de `usePanier()`, a chaque fois qu'on appelle cette fonction, ca cree un nouveau tableau vide. Donc quand j'appelle usePanier() dans le menu, le panier est vide, et c'est la meme chose si je l'appelle dans Panier. 
 - Q3.2 : Sans `.stop.prevent`, j'ai vu qu'au lieu de juste ajouter le plat au panier quand on clique sur +, c'est comme si on cliquait aussi sur le lien vers la page detail du plat en question parce qu'on va dans cette page apres le clic: 2 actions en meme temps. D'apres mes recherches, la propagation d'evenement c'est quand un evenement remonte vers ses elements parents et c'est ce qui s'est passe ici vu que le clic est remonte vers ion-item ou il y a le lien router-link.
 - Q3.3 : Oui, le calcul du `total` fonctionne avec `l.plat.prix * l.quantite`. Et avec `t + l.plat.prix` pour des quantités de 1 ca ne fonctionne pas vu qu'il peut y avoir une concatenation au lieu d'une addition.
+
+
+## Fiche 04 — La commande
+
+- Q4.1 : On a besoin de convertir avec `Number(table.value)` avant l'envoi pour s'assurer que la valeur soit un nombre. `ion-input` de type `number` renvoie un String.
+- Q4.2 : Dans `envoyer()`, `finally` permet de fermer l'indicateur de chargement quoi qu'il arrive (que l'envoi reussisse ou non) puisque `finally` en soi-meme s'execute toujours.
+- Q4.3 : L'API vérifie-t-elle la table alors que l'application pourrait le faire pour assurer la securite des donnees. Il faut aussi verifier cote application pour mieux gerer les erreurs.
