@@ -18,7 +18,7 @@ export function usePanier() {
   function changerQuantite(platId, delta) {
     // TODO : ajoute delta (+1 ou -1) à la quantité ;
     //        si la quantité tombe à 0, retirer la ligne
-    const ligne = lignes.value.find(l => l.plat.id === plat.id);
+    const ligne = lignes.value.find(l => l.plat.id === platId);
     if(ligne) {
         ligne.quantite += delta;
 

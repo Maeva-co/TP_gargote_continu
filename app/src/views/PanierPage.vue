@@ -70,6 +70,14 @@
             </h2>
           </ion-text>
         </ion-item>
+
+        <ion-input v-model="table" type="number" label="Numéro de table"
+           label-placement="floating" fill="outline"
+           :class="{ 'ion-invalid ion-touched': erreurTable }"
+           :error-text="erreurTable" />
+        <ion-button expand="block" class="ion-margin-top" :disabled="envoi" @click="confirmer">
+          Envoyer la commande
+        </ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -79,7 +87,8 @@
 <script setup>
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonText,
-  IonButtons, IonButton, IonList, IonItem, IonLabel, IonIcon
+  IonButtons, IonButton, IonList, IonItem, IonLabel, IonIcon, IonInput,
+  loadingController, toastController, useIonRouter, alertController
 } from '@ionic/vue';
 
 import { addCircleOutline, removeCircleOutline } from 'ionicons/icons';
@@ -87,6 +96,9 @@ import { addCircleOutline, removeCircleOutline } from 'ionicons/icons';
 import { usePanier } from '@/composables/usePanier';
 import { formatAriary } from '@/utils/format';
 
+import api from '@/services/api';
+
+import { ref } from 'vue';
 
 const {
   lignes,
@@ -94,6 +106,94 @@ const {
   vider,
   total
 } = usePanier();
+
+const ionRouter = useIonRouter();
+
+const table = ref('');
+const erreurTable = ref('');
+const envoi = ref(false);
+
+async function confirmer() {
+  const alerte = await alertController.create({
+    header: 'Confirmer la commande',
+    message: `Table ${table.value} : ${formatAriary(total.value)}`,
+    buttons: [
+      { text: 'Annuler', role: 'cancel' },
+      { text: 'Envoyer', role: 'confirm' },
+    ],
+  });
+  await alerte.present();
+  const { role } = await alerte.onDidDismiss();
+  if (role === 'confirm') await envoyer();
+}
+
+async function envoyer() {
+  envoi.value = true;
+  let chargement;
+  try {
+    // 1. Afficher l'indicateur de chargement
+    chargement = await loadingController.create({
+      message: 'Envoi de la commande...'
+    });
+
+    await chargement.present();
+
+    // 2. Construire le corps de la commande
+    const commande = {
+      table: Number(table.value),
+      lignes: lignes.value.map(ligne => ({
+        plat_id: ligne.plat.id,
+        quantite: ligne.quantite
+      }))
+    };
+
+    // 3. Envoyer la commande à l'API
+    const resultat = await api.creerCommande(commande);
+
+    // 4. En cas de succès : vider le panier et le champ
+    vider();
+    table.value = '';
+    erreurTable.value = '';
+
+    // Afficher un toast vert
+    const toast = await toastController.create({
+      message: `Commande n°${resultat.id} envoyée`,
+      duration: 2500,
+      color: 'success',
+      position: 'bottom'
+    });
+
+    await toast.present();
+
+    // Rediriger vers l'onglet Commandes
+    ionRouter.navigate('/tabs/commandes', 'forward', 'replace');
+
+  } catch (e) {
+    // 5. Gérer l'erreur 422 concernant la table
+    if (e.statut === 422 && e.details?.table) {
+      const message = e.details.table;
+      erreurTable.value = Array.isArray(message)
+        ? message.join(' ')
+        : message;
+    } else {
+      // 6. Pour les autres erreurs : toast rouge
+      const toast = await toastController.create({
+        message: e.message,
+        duration: 3000,
+        color: 'danger',
+        position: 'bottom'
+      });
+      await toast.present();
+    }
+  } finally {
+    // 7. Toujours fermer l'indicateur de chargement
+    if (chargement) {
+      await chargement.dismiss();
+    }
+    envoi.value = false;
+  }
+}
+
 
 </script>
 
