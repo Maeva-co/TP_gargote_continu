@@ -44,7 +44,6 @@
         <ion-item v-for="plat in platsFiltres" :key="plat.id" :router-link="`/tabs/menu/${plat.id}`">
           <ion-label>
             <h2>{{ plat.nom }}</h2>
-            <a href="/tabs/menu/${plat.id}">Navigation avec href</a>
             <!-- <p>{{ plat.categorie.nom }}</p> -->
             <p>{{ plat.description }}</p>
             <ion-text color="primary">
@@ -54,6 +53,14 @@
               </p>
             </ion-text>
           </ion-label>
+          <ion-button
+            slot="end"
+            fill="clear"
+            :disabled="!plat.disponible"
+            @click.stop.prevent="ajouterAuPanier(plat)"
+          >
+            <ion-icon slot="icon-only" :icon="addCircleOutline" />
+          </ion-button>
           <!-- <ion-note slot="end">{{ formatAriary(plat.prix) }}</ion-note> -->
         </ion-item>
       </ion-list>
@@ -69,13 +76,17 @@ import { ref, onMounted, computed } from 'vue';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
   IonList, IonItem, IonLabel, IonSpinner, IonText, IonButton, 
-  IonBadge, IonSearchbar, IonSegment, IonSegmentButton, IonRefresher, IonRefresherContent
+  IonBadge, IonSearchbar, IonSegment, IonSegmentButton, IonRefresher, IonRefresherContent,
+  IonIcon, toastController
 } from '@ionic/vue';
 import api from '@/services/api';
 import { formatAriary } from '@/utils/format';
 
 import { onUnmounted } from 'vue';
 import { onIonViewWillEnter, onIonViewDidLeave } from '@ionic/vue';
+
+import { addCircleOutline } from 'ionicons/icons';
+import { usePanier } from '@/composables/usePanier';
 
 const plats = ref([]);
 const chargement = ref(true);
@@ -86,11 +97,27 @@ const recherche = ref('');
 const categories = ref([]);
 const categorieChoisie = ref('toutes');
 
+const { ajouter } = usePanier();
+
 const platsFiltres = computed(() =>
   plats.value.filter(p =>
     p.nom.toLowerCase().includes(recherche.value.toLowerCase())
   )
 )
+
+async function ajouterAuPanier(plat) {
+  ajouter(plat);
+
+  const toast = await toastController.create({
+    message: `${plat.nom} ajouté au panier`,
+    duration: 1500,
+    position: 'top',
+    color: 'secondary',
+  });
+
+  await toast.present();
+}
+
 
 async function charger() {
   chargement.value = true;

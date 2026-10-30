@@ -42,3 +42,10 @@ Score obtenu à `npm run js` : 6 / 6
     `onMounted` est exécuté une seule fois.
 - Q2.2 : Il faudra charger les donnees dans un hook onIonViewWillEnter car ce hook est execute a chaque fois que l'user ouvre la page Commandes pour afficher une liste a jour. On n'utilise pas onMounted car il ne s'execute qu'une seule fois, les donnees ne seront pas a jour.
 - Q2.3 : Différence entre `router-link` sur un `ion-item` et un simple lien `<a href>` : cote visuel -> `router-link` permet de mettre un lien sur le contenu de `ion-item` sans changement css mais `<a href>` change directement la couleur et souligne le contenu, comme on connait des liens; cote back -> `router-link` sur un `ion-item` utilise Vue Router tandis que `<a href>` est une balise classique html.
+
+
+## Fiche 03 — Le panier
+
+- Q3.1 : Si `const lignes = ref([])` était écrit **à l'intérieur** de `usePanier()`, a chaque fois qu'on appelle cette fonction, ca cree un nouveau tableau vide. Donc quand j'appelle usePanier() dans le menu, le panier est vide, et c'est la meme chose si je l'appelle dans Panier. 
+- Q3.2 : Sans `.stop.prevent`, j'ai vu qu'au lieu de juste ajouter le plat au panier quand on clique sur +, c'est comme si on cliquait aussi sur le lien vers la page detail du plat en question parce qu'on va dans cette page apres le clic: 2 actions en meme temps. D'apres mes recherches, la propagation d'evenement c'est quand un evenement remonte vers ses elements parents et c'est ce qui s'est passe ici vu que le clic est remonte vers ion-item ou il y a le lien router-link.
+- Q3.3 : Oui, le calcul du `total` fonctionne avec `l.plat.prix * l.quantite`. Et avec `t + l.plat.prix` pour des quantités de 1 ca ne fonctionne pas vu qu'il peut y avoir une concatenation au lieu d'une addition.

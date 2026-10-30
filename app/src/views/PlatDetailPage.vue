@@ -14,7 +14,7 @@
       <ion-card v-if="plat">
         <ion-card-header>
           <ion-card-subtitle>
-            {{ plat.categorie }}
+            {{ plat.categorie.nom }}
           </ion-card-subtitle>
 
           <ion-card-title>
@@ -25,8 +25,15 @@
         <ion-card-content>
             {{ plat.description }}
         </ion-card-content>
-      </ion-card>
 
+        <ion-button
+            expand="block"
+            :disabled="!plat?.disponible"
+            @click="ajouterAuPanier"
+            >
+            Ajouter au panier
+            </ion-button>
+      </ion-card>
     </ion-content>
   </ion-page>
 </template>
@@ -43,9 +50,15 @@ import { ref, onMounted} from 'vue';
 
 import api from '@/services/api';
 
+import { usePanier } from '@/composables/usePanier';
+import { useIonRouter } from '@ionic/vue';
+
 const route = useRoute();
 const id = route.params.id;
 const plat = ref(null);
+
+const { ajouter } = usePanier();
+const ionRouter = useIonRouter();
 
 console.log('Identifiant du plat :', id);
 
@@ -55,6 +68,11 @@ async function chargerPlat() {
   } catch (e) {
     console.error('Erreur lors du chargement du plat :', e);
   }
+}
+
+function ajouterAuPanier() {
+  ajouter(plat.value);
+  ionRouter.back();
 }
 
 onMounted(chargerPlat);

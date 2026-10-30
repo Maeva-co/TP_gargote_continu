@@ -40,7 +40,7 @@ export default {
   },
 
   getPlat(id) {
-    return requete('/plats/:id')
+    return requete(`/plats/${id}`)
   }
 
 };
