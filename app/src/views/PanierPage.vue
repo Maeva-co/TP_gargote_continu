@@ -3,110 +3,76 @@
     <ion-header>
       <ion-toolbar color="primary">
         <ion-title>Panier</ion-title>
-        <!-- Bouton Vider -->
-        <ion-buttons slot="end" v-if="lignes.length > 0">
-          <ion-button @click="vider">
-            Vider
-          </ion-button>
+        <ion-buttons slot="end">
+          <ion-button v-if="lignes.length" @click="vider">Vider</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content class="ion-padding">
-      <!-- Panier vide -->
-      <div v-if="lignes.length === 0" class="ion-text-center">
-        <ion-text color="medium">
-          <h2>Votre panier est vide</h2>
-          <p>Ajoutez des plats depuis le menu.</p>
-        </ion-text>
-        <ion-button router-link="/tabs/menu" expand="block">
-          Voir le menu
-        </ion-button>
+    <ion-content>
+      <div v-if="lignes.length === 0" class="ion-padding ion-text-center">
+        <ion-text color="medium"><p>Votre panier est vide.</p></ion-text>
+        <ion-button router-link="/tabs/menu" fill="outline">Voir le menu</ion-button>
       </div>
 
-      <!-- Panier avec des articles -->
-      <div v-else>
+      <template v-else>
         <ion-list>
           <ion-item v-for="ligne in lignes" :key="ligne.plat.id">
             <ion-label>
               <h2>{{ ligne.plat.nom }}</h2>
-              <p>
-                {{ formatAriary(ligne.plat.prix) }} × {{ ligne.quantite }}
-              </p>
-              <p>
-                Sous-total :
-                {{ formatAriary(Number(ligne.plat.prix) * ligne.quantite) }}
-              </p>
+              <p>{{ formatAriary(ligne.plat.prix) }} × {{ ligne.quantite }}</p>
             </ion-label>
+            <ion-buttons slot="end">
+              <ion-button aria-label="Retirer un" @click="changerQuantite(ligne.plat.id, -1)">
+                <ion-icon slot="icon-only" :icon="removeCircleOutline" />
+              </ion-button>
+              <span class="quantite">{{ ligne.quantite }}</span>
+              <ion-button aria-label="Ajouter un" @click="changerQuantite(ligne.plat.id, 1)">
+                <ion-icon slot="icon-only" :icon="addCircleOutline" />
+              </ion-button>
+            </ion-buttons>
+          </ion-item>
 
-            <!-- Diminuer la quantité -->
-            <ion-button
-              slot="end"
-              fill="clear"
-              @click="changerQuantite(ligne.plat.id, -1)"
-            >
-              <ion-icon :icon="removeCircleOutline" />
-            </ion-button>
-
-            <!-- Augmenter la quantité -->
-            <ion-button
-              slot="end"
-              fill="clear"
-              @click="changerQuantite(ligne.plat.id, 1)"
-            >
-              <ion-icon :icon="addCircleOutline" />
-            </ion-button>
+          <ion-item lines="none">
+            <ion-label><strong>Total</strong></ion-label>
+            <ion-text slot="end" color="primary"><strong>{{ formatAriary(total) }}</strong></ion-text>
           </ion-item>
         </ion-list>
 
-        <!-- Total -->
-        <ion-item>
-          <ion-label>
-            <h2><strong>Total</strong></h2>
-          </ion-label>
-          <ion-text color="primary">
-            <h2>
-              <strong>{{ formatAriary(total) }}</strong>
-            </h2>
-          </ion-text>
-        </ion-item>
-
-        <ion-input v-model="table" type="number" label="Numéro de table"
-           label-placement="floating" fill="outline"
-           :class="{ 'ion-invalid ion-touched': erreurTable }"
-           :error-text="erreurTable" />
-        <ion-button expand="block" class="ion-margin-top" :disabled="envoi" @click="confirmer">
-          Envoyer la commande
-        </ion-button>
-      </div>
+        <div class="ion-padding">
+          <ion-input
+            v-model="table"
+            type="number"
+            label="Numéro de table"
+            label-placement="floating"
+            fill="outline"
+            min="1"
+            max="20"
+            :class="{ 'ion-invalid ion-touched': erreurTable }"
+            :error-text="erreurTable"
+          />
+          <ion-button expand="block" class="ion-margin-top" :disabled="envoi" @click="confirmer">
+            Envoyer la commande
+          </ion-button>
+        </div>
+      </template>
     </ion-content>
   </ion-page>
 </template>
 
-
 <script setup>
-import {
-  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonText,
-  IonButtons, IonButton, IonList, IonItem, IonLabel, IonIcon, IonInput,
-  loadingController, toastController, useIonRouter, alertController
-} from '@ionic/vue';
-
-import { addCircleOutline, removeCircleOutline } from 'ionicons/icons';
-
-import { usePanier } from '@/composables/usePanier';
-import { formatAriary } from '@/utils/format';
-
-import api from '@/services/api';
-
 import { ref } from 'vue';
+import {
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel,
+  IonButtons, IonButton, IonIcon, IonText, IonInput,
+  alertController, toastController, loadingController, useIonRouter,
+} from '@ionic/vue';
+import { addCircleOutline, removeCircleOutline } from 'ionicons/icons';
+import api from '@/services/api';
+import { formatAriary } from '@/utils/format';
+import { usePanier } from '@/composables/usePanier';
 
-const {
-  lignes,
-  changerQuantite,
-  vider,
-  total
-} = usePanier();
-
+const { lignes, changerQuantite, vider, total } = usePanier();
 const ionRouter = useIonRouter();
 
 const table = ref('');
@@ -114,9 +80,10 @@ const erreurTable = ref('');
 const envoi = ref(false);
 
 async function confirmer() {
+  erreurTable.value = '';
   const alerte = await alertController.create({
     header: 'Confirmer la commande',
-    message: `Table ${table.value} : ${formatAriary(total.value)}`,
+    message: `Table ${table.value || '?'} : ${formatAriary(total.value)}`,
     buttons: [
       { text: 'Annuler', role: 'cancel' },
       { text: 'Envoyer', role: 'confirm' },
@@ -129,71 +96,39 @@ async function confirmer() {
 
 async function envoyer() {
   envoi.value = true;
-  let chargement;
+  const chargement = await loadingController.create({ message: 'Envoi...' });
+  await chargement.present();
   try {
-    // 1. Afficher l'indicateur de chargement
-    chargement = await loadingController.create({
-      message: 'Envoi de la commande...'
-    });
-
-    await chargement.present();
-
-    // 2. Construire le corps de la commande
-    const commande = {
+    const commande = await api.creerCommande({
       table: Number(table.value),
-      lignes: lignes.value.map(ligne => ({
-        plat_id: ligne.plat.id,
-        quantite: ligne.quantite
-      }))
-    };
-
-    // 3. Envoyer la commande à l'API
-    const resultat = await api.creerCommande(commande);
-
-    // 4. En cas de succès : vider le panier et le champ
+      lignes: lignes.value.map((l) => ({ plat_id: l.plat.id, quantite: l.quantite })),
+    });
     vider();
     table.value = '';
-    erreurTable.value = '';
-
-    // Afficher un toast vert
-    const toast = await toastController.create({
-      message: `Commande n°${resultat.id} envoyée`,
-      duration: 2500,
-      color: 'success',
-      position: 'bottom'
-    });
-
-    await toast.present();
-
-    // Rediriger vers l'onglet Commandes
+    await afficherToast(`Commande n°${commande.id} envoyée`, 'success');
     ionRouter.navigate('/tabs/commandes', 'forward', 'replace');
-
   } catch (e) {
-    // 5. Gérer l'erreur 422 concernant la table
-    if (e.statut === 422 && e.details?.table) {
-      const message = e.details.table;
-      erreurTable.value = Array.isArray(message)
-        ? message.join(' ')
-        : message;
+    if (e.statut === 422 && e.details.table) {
+      erreurTable.value = e.details.table;
     } else {
-      // 6. Pour les autres erreurs : toast rouge
-      const toast = await toastController.create({
-        message: e.message,
-        duration: 3000,
-        color: 'danger',
-        position: 'bottom'
-      });
-      await toast.present();
+      await afficherToast(e.message, 'danger');
     }
   } finally {
-    // 7. Toujours fermer l'indicateur de chargement
-    if (chargement) {
-      await chargement.dismiss();
-    }
+    await chargement.dismiss();
     envoi.value = false;
   }
 }
 
-
+async function afficherToast(message, color) {
+  const toast = await toastController.create({ message, color, duration: 2500, position: 'top' });
+  await toast.present();
+}
 </script>
 
+<style scoped>
+.quantite {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
+}
+</style>

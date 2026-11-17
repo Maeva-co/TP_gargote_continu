@@ -7,24 +7,22 @@ export function usePanier() {
   function ajouter(plat) {
     // TODO : si le plat est déjà dans le panier, quantite + 1,
     //        sinon ajouter une ligne { plat, quantite: 1 }
-    const ligne = lignes.value.find(l => l.plat.id === plat.id);
+    const ligne = lignes.value.find((l) => l.plat.id === plat.id);
     if (ligne) {
-        ligne.quantite++;
+      ligne.quantite++;
     } else {
-        lignes.value.push({plat: plat, quantite: 1});
+      lignes.value.push({ plat, quantite: 1 });
     }
   }
 
   function changerQuantite(platId, delta) {
     // TODO : ajoute delta (+1 ou -1) à la quantité ;
     //        si la quantité tombe à 0, retirer la ligne
-    const ligne = lignes.value.find(l => l.plat.id === platId);
-    if(ligne) {
-        ligne.quantite += delta;
-
-        if (ligne.quantite <= 0) {
-            lignes.value = lignes.value.filter(l => l.plat.id !== platId);
-        }
+    const ligne = lignes.value.find((l) => l.plat.id === platId);
+    if (!ligne) return;
+    ligne.quantite += delta;
+    if (ligne.quantite <= 0) {
+      lignes.value = lignes.value.filter((l) => l.plat.id !== platId);
     }
   }
 
@@ -34,11 +32,10 @@ export function usePanier() {
 
   const nombreArticles = computed(() => 
     /* TODO : somme des quantités */
-    lignes.value.reduce((somme, ligne) => somme + ligne.quantite, 0)
+    lignes.value.reduce((n, l) => n + l.quantite, 0)
   );
   const total = computed(() => /* TODO : somme des prix × quantités */
-    lignes.value.reduce(
-    (somme, ligne) => somme + Number(ligne.plat.prix) * ligne.quantite, 0)
+    lignes.value.reduce((t, l) => t + l.plat.prix * l.quantite, 0)
   );
 
   return { lignes, ajouter, changerQuantite, vider, nombreArticles, total };

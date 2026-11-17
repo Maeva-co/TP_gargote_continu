@@ -55,4 +55,4 @@ Score obtenu à `npm run js` : 6 / 6
 
 - Q4.1 : On a besoin de convertir avec `Number(table.value)` avant l'envoi pour s'assurer que la valeur soit un nombre. `ion-input` de type `number` renvoie un String.
 - Q4.2 : Dans `envoyer()`, `finally` permet de fermer l'indicateur de chargement quoi qu'il arrive (que l'envoi reussisse ou non) puisque `finally` en soi-meme s'execute toujours.
-- Q4.3 : L'API vérifie-t-elle la table alors que l'application pourrait le faire pour assurer la securite des donnees. Il faut aussi verifier cote application pour mieux gerer les erreurs.
+- Q4.3 : L'API vérifie la table alors que l'application pourrait le faire pour assurer la securite des donnees. Il faut aussi verifier cote application pour mieux gerer les erreurs.

@@ -3,8 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Diagnostic JavaScript (fiche 00) : aucune dépendance à installer",
+  "description": "Exercices du TP Ionic : diagnostic JavaScript (fiche 00) et mini-cours TypeScript (fiche 06)",
   "scripts": {
-    "js": "node js/verifier.js"
+    "js": "node js/verifier.js",
+    "ts:types": "tsc --noEmit",
+    "ts": "tsc --noEmit && tsx ts/verifier.ts"
+  },
+  "devDependencies": {
+    "tsx": "4.23.15",
+    "typescript": "6.0.3"
   }
 }
