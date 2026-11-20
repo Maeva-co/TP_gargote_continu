@@ -5,17 +5,18 @@
  * Interdit : any, @ts-ignore, et supprimer une annotation.
  */
 
-// A. Survolez nomGargote dans VS Code : quel type TypeScript a-t-il deviné ?
+// A. Survolez nomGargote dans VS Code : quel type TypeScript a-t-il deviné ? I a devine un STring
 //    Écrivez ensuite l'annotation explicitement.
-export const nomGargote = 'Chez Rado';
+// export const nomGargote = 'Chez Rado';
+export const nomGargote: string = 'Chez Rado';
 
 // B. Trois erreurs à corriger (en changeant la valeur, pas le type)
-export const prix: number = '6000';
-export const disponible: boolean = 1;
-export const quantites: number[] = [1, '2', 3];
+export const prix: number = 6000;
+export const disponible: boolean = true;
+export const quantites: number[] = [1, 2, 3];
 
 // C. Les paramètres sont implicitement « any » : typez-les, ainsi que le retour.
 //    prixAvecService(6000, 0.1)  ->  6600
-export function prixAvecService(prix, taux) {
+export function prixAvecService(prix: number, taux: number) {
   return prix * (1 + taux);
 }
